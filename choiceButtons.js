@@ -1,18 +1,13 @@
-// TODO: add a reset method and use it in constructor.
-
 // Buttons to choose a composer.
 export class ChoiceButtons {
     constructor(divElement, choices, correct) {
-        this.selectedButton = null
         this.choiceButtons = []
-        this.correct = correct
 
         // Spawn all of the buttons and their click handlers:
         for (const choice of choices) {
             const choiceButton = document.createElement('button')
             this.choiceButtons.push(choiceButton)
             divElement.appendChild(choiceButton)
-            choiceButton.innerText = choice
             
             // Unchoose the previous selectedButton, set selectedButton to choiceButton.
             const setselectedButton = () => {
@@ -26,8 +21,21 @@ export class ChoiceButtons {
             choiceButton.addEventListener('click', setselectedButton)
         }
 
-        // Bind the reveal method to the instance
-        // this.reveal = this.reveal.bind(this);
+        this.reset(choices, correct)
+    }
+
+    reset(choices, correct) {
+        this.selectedButton = null
+        this.correct = correct
+
+        // Spawn all of the buttons and their click handlers:
+        for (const [i, choice] of choices.entries()) {
+            const choiceButton = this.choiceButtons[i]
+            choiceButton.innerText = choice
+            choiceButton.disabled = false
+            choiceButton.classList.remove('green-background')
+            choiceButton.classList.remove('red-background')
+        }
     }
 
     get selectedComposer() {
@@ -39,6 +47,7 @@ export class ChoiceButtons {
 
     reveal() {
         const selected = this.selectedComposer
+        this.selectedButton.classList.remove('blue-background')
         for (const choiceButton of this.choiceButtons) {
             choiceButton.disabled = true
         }

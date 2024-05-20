@@ -11,6 +11,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --button-size: 150px;
+  --button-gap: 20px;
 }
 
 a {
@@ -100,7 +103,7 @@ button:focus-visible {
     grid-template-rows: auto auto;
     grid-template-columns: auto auto;
     justify-items: center;
-    gap: 20px;
+    gap: var(--button-gap);
     width: min-content;
     height: min-content;
     margin: auto;
@@ -119,11 +122,11 @@ button:focus-visible {
 }
 
 #choice-buttons button {
-    width: 100px;
-    height: 100px;
+    width: var(--button-size);
+    height: var(--button-size);
 }
 
 #check-button {
-    margin-top: 20px;
-    width: 220px;
+    margin-top: var(--button-gap);
+    width: calc(2 * var(--button-size) + var(--button-gap));
 }

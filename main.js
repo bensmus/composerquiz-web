@@ -25,6 +25,7 @@ import './style.css'
 
 import { ChoiceButtons } from './choiceButtons'
 import { WorkInfo } from './workInfo'
+import { CheckButton } from './checkButton'
 
 const choiceButtons = new ChoiceButtons(
     document.querySelector('#choice-buttons'), 
@@ -39,13 +40,8 @@ const workInfo = new WorkInfo(
     'Sibelius'
 )
 
-// TODO: this should be a class of its own with an inner state and 
-// should take choiceButtons and workInfo as parameters
-const checkButton = document.querySelector('#check-button')
-
-checkButton.addEventListener('click', () => {
-    if (choiceButtons.selectedComposer != null) {
-        workInfo.reveal(); choiceButtons.reveal()
-        checkButton.innerText = 'Try again'
-    }
-})
+new CheckButton(
+    document.querySelector('#check-button'),
+    workInfo, 
+    choiceButtons
+);
