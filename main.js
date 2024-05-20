@@ -26,22 +26,31 @@ import './style.css'
 import { ChoiceButtons } from './choiceButtons'
 import { WorkInfo } from './workInfo'
 import { CheckButton } from './checkButton'
+import { Fetcher } from './fetcher'
 
-const choiceButtons = new ChoiceButtons(
-    document.querySelector('#choice-buttons'), 
-    ['Chopin', 'Bach', 'Sibelius', 'Rameau'],
-    'Sibelius'
-)
+const fetcher = new Fetcher()
+const [previewUrl, workTitle, correct, decoys] = fetcher.fetch()
+
+const previewElem = document.querySelector('#preview')
+previewElem.src = previewUrl
 
 const workInfo = new WorkInfo(
     document.querySelector('#work-text'),
     document.querySelector('#composer-text'),
-    'Thing in F major',
-    'Sibelius'
+    workTitle,
+    correct
+)
+
+const choiceButtons = new ChoiceButtons(
+    document.querySelector('#choice-buttons'), 
+    correct,
+    decoys
 )
 
 new CheckButton(
     document.querySelector('#check-button'),
+    previewElem,
     workInfo, 
-    choiceButtons
+    choiceButtons,
+    fetcher
 );

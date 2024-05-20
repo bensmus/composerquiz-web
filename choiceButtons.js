@@ -1,10 +1,16 @@
 // Buttons to choose a composer.
 export class ChoiceButtons {
-    constructor(divElement, choices, correct) {
+    static shuffleCorrectAndDecoys(correct, decoys) {
+        const combined = [correct, ...decoys]
+        shuffle(combined)
+        return combined
+    }
+
+    constructor(divElement, correct, decoys) {
         this.choiceButtons = []
 
         // Spawn all of the buttons and their click handlers:
-        for (const choice of choices) {
+        for (let i = 0; i < decoys.length + 1; i++) {
             const choiceButton = document.createElement('button')
             this.choiceButtons.push(choiceButton)
             divElement.appendChild(choiceButton)
@@ -21,12 +27,13 @@ export class ChoiceButtons {
             choiceButton.addEventListener('click', setselectedButton)
         }
 
-        this.reset(choices, correct)
+        this.reset(correct, decoys)
     }
 
-    reset(choices, correct) {
+    reset(correct, decoys) {
         this.selectedButton = null
         this.correct = correct
+        const choices = ChoiceButtons.shuffleCorrectAndDecoys(correct, decoys)
 
         // Spawn all of the buttons and their click handlers:
         for (const [i, choice] of choices.entries()) {
@@ -56,5 +63,22 @@ export class ChoiceButtons {
         } else {
             this.selectedButton.classList.add('red-background')
         }
+    }
+}
+
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffle(array) {
+    let currentIndex = array.length;
+  
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+  
+        // Pick a remaining element...
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
     }
 }
