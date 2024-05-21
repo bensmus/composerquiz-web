@@ -1,9 +1,9 @@
+import { sample } from './randomArrayOps'
+
 // Buttons to choose a composer.
 export class ChoiceButtons {
     static shuffleCorrectAndDecoys(correct, decoys) {
-        const combined = [correct, ...decoys]
-        shuffle(combined)
-        return combined
+        return sample([correct, ...decoys], decoys.length + 1)
     }
 
     constructor(divElement, correct, decoys) {
@@ -63,22 +63,5 @@ export class ChoiceButtons {
         } else {
             this.selectedButton.classList.add('red-background')
         }
-    }
-}
-
-// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-function shuffle(array) {
-    let currentIndex = array.length;
-  
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
-  
-        // Pick a remaining element...
-        let randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
     }
 }
