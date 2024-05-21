@@ -33,19 +33,17 @@ class OpenOpusFetcher {
         async function fetchFourComposers() {
             const [epochIndex, epoch] = choice(OpenOpusFetcher.epochs)
             let composerObjs = await fetchComposers(epoch)
-            const numToSample = 4 - composerObjs.length
-            if (numToSample > 0) { // Need to fetch composers from adjacent epoch.
+            const fetchAdj = composerObjs.length < 4
+            if (fetchAdj) { // Need to fetch composers from adjacent epoch.
                 let composerObjsAdjEpoch;
                 if (epochIndex == OpenOpusFetcher.epochs.length - 1) {
                     composerObjsAdjEpoch = await fetchComposers(OpenOpusFetcher.epochs[OpenOpusFetcher.epochs.length - 2])
                 } else {
                     composerObjsAdjEpoch = await fetchComposers(OpenOpusFetcher.epochs[epochIndex + 1])
                 }
-                composerObjs = [...composerObjs, ...sample(composerObjsAdjEpoch, numToSample)]
-            } else { // We have more than enough composers in this epoch.
-                composerObjs = sample(composerObjs, 4)
+                composerObjs = [...composerObjs, ...composerObjsAdjEpoch]
             }
-            return composerObjs
+            return sample(composerObjs, 4)
         }
 
         const [correctObj, ...decoyObjs] = await fetchFourComposers()
@@ -55,17 +53,19 @@ class OpenOpusFetcher {
         return [correctId, correct, decoys]
     }
 
-    static fetchRandomWork(composerId) {
-        // FIXME
-        return 'Gigue'
+    static async fetchRandomWork(composerId) {
+        const worksMethod = `work/list/composer/${composerId}/genre/Recommended.json`
+        const response = await axios.get(OpenOpusFetcher.baseUrl + worksMethod)
+        const works = response.data.works
+        const [, work] = choice(works)
+        return work.title
     }
 }
 
 export class Fetcher {
-
     async fetch() {
         const [correctId, correct, decoys] = await OpenOpusFetcher.fetchCorrectAndDecoys()
-        const workTitle = OpenOpusFetcher.fetchRandomWork(correctId)
+        const workTitle = await OpenOpusFetcher.fetchRandomWork(correctId)
         const audioUrl = 'https://p.scdn.co/mp3-preview/97dac628da05e44a4c7050bc8e5e2078af590e90?cid=66a3d2ff0264486bb7e5e495cc712271'
         return [audioUrl, workTitle, correct, decoys]
     }
