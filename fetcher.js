@@ -67,7 +67,11 @@ class OpenOpusFetcher {
 class SpotifyFetcher {
     static baseUrl = 'https://api.spotify.com'
 
+    static token = ''
+
     static async fetchAudioUrl(composerName, workTitle) {
+
+        // FIXME add a try catch, so that you're not always fetching a new token
         const query = `${workTitle} by ${composerName}`
         const searchMethod = '/v1/search'
         const config = {
@@ -89,9 +93,8 @@ class SpotifyFetcher {
         }
     }
 
-    static get token() {
-        // TODO
-        return "BQCdbsIwWLE6t_BFlgkfQynJE4nKXwkwLWrB415CDFlN3f8_azJhdjXgbo5dEEQZGTGjKtkTf4qNYn1Gm3jv1xTLqriwmD2foYvL9rE3AYru509qncM"
+    static async getToken() {
+        const token = (await axios.get('https://v4m134dlpi.execute-api.us-west-2.amazonaws.com/refreshSpotifyAuthToken')).data
     }
 }
 
