@@ -62,11 +62,40 @@ class OpenOpusFetcher {
     }
 }
 
+class SpotifyFetcher {
+    static baseUrl = 'https://api.spotify.com'
+    
+    // TODO: Use lamdas to get this token
+    static token = 'BQB60hm4l1g6hQlHHRDdByo5fCzDf3T5fZv7CafVB5SszWewkEIvmu89uAMNOnj5WAlpNzclLOBd47BfnYYBDar5s6Uh5cYLPWYrjtm23wUFqBncL9A'
+
+    static async fetchAudioUrl(composerName, workTitle) {
+        const query = `${workTitle} by ${composerName}`
+        const searchMethod = '/v1/search'
+        const config = {
+            headers: {
+                Authorization: `Bearer ${SpotifyFetcher.token}`
+            },
+            params: {
+                q: query,
+                type: 'track'
+            }
+        }
+        const response = await axios.get(SpotifyFetcher.baseUrl + searchMethod, config)
+        const tracks = response.data.tracks.items
+
+        for (const track of tracks) {
+            if (track.preview_url) {
+                return track.preview_url
+            }
+        }
+    }
+}
+
 export class Fetcher {
     async fetch() {
         const [correctId, correct, decoys] = await OpenOpusFetcher.fetchCorrectAndDecoys()
         const workTitle = await OpenOpusFetcher.fetchRandomWork(correctId)
-        const audioUrl = 'https://p.scdn.co/mp3-preview/97dac628da05e44a4c7050bc8e5e2078af590e90?cid=66a3d2ff0264486bb7e5e495cc712271'
+        const audioUrl = await SpotifyFetcher.fetchAudioUrl(correct, workTitle)
         return [audioUrl, workTitle, correct, decoys]
     }
 }
