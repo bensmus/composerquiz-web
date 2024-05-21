@@ -29,28 +29,31 @@ import { CheckButton } from './checkButton'
 import { Fetcher } from './fetcher'
 
 const fetcher = new Fetcher()
-const [audioUrl, workTitle, correct, decoys] = fetcher.fetch()
 
-const audioElem = document.querySelector('#audio')
-audioElem.src = audioUrl
+document.addEventListener('DOMContentLoaded', async () => {
+    const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
 
-const workInfo = new WorkInfo(
-    document.querySelector('#work-text'),
-    document.querySelector('#composer-text'),
-    workTitle,
-    correct
-)
+    const audioElem = document.querySelector('#audio')
+    audioElem.src = audioUrl
 
-const choiceButtons = new ChoiceButtons(
-    document.querySelector('#choice-buttons'), 
-    correct,
-    decoys
-)
+    const workInfo = new WorkInfo(
+        document.querySelector('#work-text'),
+        document.querySelector('#composer-text'),
+        workTitle,
+        correct
+    )
 
-new CheckButton(
-    document.querySelector('#check-button'),
-    audioElem,
-    workInfo, 
-    choiceButtons,
-    fetcher
-);
+    const choiceButtons = new ChoiceButtons(
+        document.querySelector('#choice-buttons'), 
+        correct,
+        decoys
+    )
+
+    new CheckButton(
+        document.querySelector('#check-button'),
+        audioElem,
+        workInfo, 
+        choiceButtons,
+        fetcher
+    );
+})

@@ -6,7 +6,7 @@ export class CheckButton {
     constructor(buttonElement, audioElem, workInfo, choiceButtons, fetcher) {
         this.buttonElement = buttonElement
         this._mode = 'Check'
-        this.buttonElement.addEventListener('click', () => {
+        this.buttonElement.addEventListener('click', async () => {
             if (choiceButtons.selectedComposer == null) {
                 return
             }
@@ -16,7 +16,7 @@ export class CheckButton {
                 this.mode = 'Try again'
             }
             else if (this._mode == 'Try again') {
-                const [audioUrl, workTitle, correct, decoys] = fetcher.fetch()
+                const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
                 audioElem.src = audioUrl
                 workInfo.reset(workTitle, correct)
                 choiceButtons.reset(correct, decoys)
