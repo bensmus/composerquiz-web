@@ -3,7 +3,7 @@
 // it reveals both the choiceButtons and workInfo.
 // In "Try again" mode, it resets them instead.
 export class CheckButton {
-    constructor(buttonElement, previewElem, workInfo, choiceButtons, fetcher) {
+    constructor(buttonElement, audioElem, workInfo, choiceButtons, fetcher) {
         this.buttonElement = buttonElement
         this._mode = 'Check'
         this.buttonElement.addEventListener('click', () => {
@@ -16,8 +16,8 @@ export class CheckButton {
                 this.mode = 'Try again'
             }
             else if (this._mode == 'Try again') {
-                const [previewUrl, workTitle, correct, decoys] = fetcher.fetch()
-                previewElem.src = previewUrl
+                const [audioUrl, workTitle, correct, decoys] = fetcher.fetch()
+                audioElem.src = audioUrl
                 workInfo.reset(workTitle, correct)
                 choiceButtons.reset(correct, decoys)
                 this.mode = 'Check'

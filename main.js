@@ -29,10 +29,10 @@ import { CheckButton } from './checkButton'
 import { Fetcher } from './fetcher'
 
 const fetcher = new Fetcher()
-const [previewUrl, workTitle, correct, decoys] = fetcher.fetch()
+const [audioUrl, workTitle, correct, decoys] = fetcher.fetch()
 
-const previewElem = document.querySelector('#preview')
-previewElem.src = previewUrl
+const audioElem = document.querySelector('#audio')
+audioElem.src = audioUrl
 
 const workInfo = new WorkInfo(
     document.querySelector('#work-text'),
@@ -49,7 +49,7 @@ const choiceButtons = new ChoiceButtons(
 
 new CheckButton(
     document.querySelector('#check-button'),
-    previewElem,
+    audioElem,
     workInfo, 
     choiceButtons,
     fetcher
