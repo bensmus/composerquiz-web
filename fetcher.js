@@ -54,9 +54,11 @@ class OpenOpusFetcher {
     }
 
     static async fetchRandomWork(composerId) {
-        const worksMethod = `work/list/composer/${composerId}/genre/Recommended.json`
-        const response = await axios.get(OpenOpusFetcher.baseUrl + worksMethod)
-        const works = response.data.works
+        function fetchWorks(composerId, type) {
+            const searchMethod = `work/list/composer/${composerId}/genre/${type == 'rec' ? 'Recommended' : 'all'}.json`
+            return axios.get(OpenOpusFetcher.baseUrl + searchMethod)
+        }
+        const works = (await fetchWorks(composerId, 'rec')).data.works ?? (await fetchWorks(composerId, 'all')).data.works
         const [, work] = choice(works)
         return work.title
     }
@@ -64,9 +66,6 @@ class OpenOpusFetcher {
 
 class SpotifyFetcher {
     static baseUrl = 'https://api.spotify.com'
-    
-    // TODO: Use lamdas to get this token
-    static token = 'BQB60hm4l1g6hQlHHRDdByo5fCzDf3T5fZv7CafVB5SszWewkEIvmu89uAMNOnj5WAlpNzclLOBd47BfnYYBDar5s6Uh5cYLPWYrjtm23wUFqBncL9A'
 
     static async fetchAudioUrl(composerName, workTitle) {
         const query = `${workTitle} by ${composerName}`
@@ -88,6 +87,11 @@ class SpotifyFetcher {
                 return track.preview_url
             }
         }
+    }
+
+    static get token() {
+        // TODO
+        return "BQCdbsIwWLE6t_BFlgkfQynJE4nKXwkwLWrB415CDFlN3f8_azJhdjXgbo5dEEQZGTGjKtkTf4qNYn1Gm3jv1xTLqriwmD2foYvL9rE3AYru509qncM"
     }
 }
 

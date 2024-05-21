@@ -16,6 +16,7 @@ export class CheckButton {
                 this.mode = 'Try again'
             }
             else if (this._mode == 'Try again') {
+                this.mode = 'Loading...'
                 const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
                 audioElem.src = audioUrl
                 workInfo.reset(workTitle, correct)
