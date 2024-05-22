@@ -31,23 +31,27 @@ import { Fetcher } from './fetcher'
 const fetcher = new Fetcher()
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const workInfo = new WorkInfo(
+        document.querySelector('#work-text'),
+        document.querySelector('#composer-text'),
+        '?',
+        '?'
+    )
+
+    const choiceButtons = new ChoiceButtons(
+        document.querySelector('#choice-buttons'), 
+        'Loading...',
+        ['Loading...', 'Loading...', 'Loading...']
+    )
+
     const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
 
     const audioElem = document.querySelector('#audio')
     audioElem.src = audioUrl
 
-    const workInfo = new WorkInfo(
-        document.querySelector('#work-text'),
-        document.querySelector('#composer-text'),
-        workTitle,
-        correct
-    )
+    workInfo.reset(workTitle, correct)
 
-    const choiceButtons = new ChoiceButtons(
-        document.querySelector('#choice-buttons'), 
-        correct,
-        decoys
-    )
+    choiceButtons.reset(correct, decoys)
 
     new CheckButton(
         document.querySelector('#check-button'),
