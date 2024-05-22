@@ -69,14 +69,12 @@ class SpotifyFetcher {
 
     static token = ''
 
-    static async fetchAudioUrl(composerName, workTitle) {
-
-        // FIXME add a try catch, so that you're not always fetching a new token
+    static async fetchAudioUrlWithToken(composerName, workTitle, token) {
         const query = `${workTitle} by ${composerName}`
         const searchMethod = '/v1/search'
         const config = {
             headers: {
-                Authorization: `Bearer ${SpotifyFetcher.token}`
+                Authorization: `Bearer ${token}`
             },
             params: {
                 q: query,
@@ -93,8 +91,19 @@ class SpotifyFetcher {
         }
     }
 
-    static async getToken() {
-        const token = (await axios.get('https://v4m134dlpi.execute-api.us-west-2.amazonaws.com/refreshSpotifyAuthToken')).data
+    static async refreshToken() {
+        token = (await axios.get('https://v4m134dlpi.execute-api.us-west-2.amazonaws.com/refreshSpotifyAuthToken')).data
+    }
+
+    static async fetchAudioUrl(composerName, workTitle) {
+        try {
+            const audioUrl = this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
+            return audioUrl
+        } catch {
+            SpotifyFetcher.refreshToken()
+            const audioUrl = this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
+            return audioUrl
+        }
     }
 }
 
