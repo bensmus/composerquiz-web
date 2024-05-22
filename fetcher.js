@@ -92,16 +92,19 @@ class SpotifyFetcher {
     }
 
     static async refreshToken() {
-        token = (await axios.get('https://v4m134dlpi.execute-api.us-west-2.amazonaws.com/refreshSpotifyAuthToken')).data
+        const response = await axios.get('https://v4m134dlpi.execute-api.us-west-2.amazonaws.com/refreshSpotifyAuthToken')
+        console.log(response.data)
+        SpotifyFetcher.token = response.data
     }
 
     static async fetchAudioUrl(composerName, workTitle) {
         try {
-            const audioUrl = this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
+            const audioUrl = await this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
             return audioUrl
         } catch {
-            SpotifyFetcher.refreshToken()
-            const audioUrl = this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
+            console.log("Fetching new token")
+            await SpotifyFetcher.refreshToken()
+            const audioUrl = await this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
             return audioUrl
         }
     }
