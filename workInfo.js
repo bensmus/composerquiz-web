@@ -13,8 +13,8 @@ export class WorkInfo {
     reset(workText, composerText) {
         this.workText = workText
         this.composerText = composerText
-        this.workTextElem.innerText = '???'
-        this.composerTextElem.innerText = 'Composed by...'
+        this.workTextElem.innerText = '?'
+        this.composerTextElem.innerText = 'Composed by ?'
     }
 
     reveal() {

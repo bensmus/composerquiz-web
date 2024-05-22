@@ -1,7 +1,7 @@
 // Button at the bottom that initially reads "Check"
-// and then "Try again". In "Check" mode, 
+// and then "Next". In "Check" mode, 
 // it reveals both the choiceButtons and workInfo.
-// In "Try again" mode, it resets them instead.
+// In "Next" mode, it resets them instead.
 export class CheckButton {
     constructor(buttonElement, audioElem, workInfo, choiceButtons, fetcher) {
         this.buttonElement = buttonElement
@@ -13,9 +13,9 @@ export class CheckButton {
             if (this._mode == 'Check') {
                 workInfo.reveal()
                 choiceButtons.reveal()
-                this.mode = 'Try again'
+                this.mode = 'Next'
             }
-            else if (this._mode == 'Try again') {
+            else if (this._mode == 'Next') {
                 this.mode = 'Loading...'
                 const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
                 audioElem.src = audioUrl
