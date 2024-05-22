@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 lambda_src/*
-!lambda_src/main.py
+!lambda_src/lambda_function.py
