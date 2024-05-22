@@ -7,13 +7,11 @@ export class ChoiceButtons {
     }
 
     constructor(divElement, correct, decoys) {
-        this.choiceButtons = []
+        this.choiceButtons = Array.from(divElement.children)
 
-        // Spawn all of the buttons and their click handlers:
+        // Attach click handlers:
         for (let i = 0; i < decoys.length + 1; i++) {
-            const choiceButton = document.createElement('button')
-            this.choiceButtons.push(choiceButton)
-            divElement.appendChild(choiceButton)
+            const choiceButton = this.choiceButtons[i]
             
             // Unchoose the previous selectedButton, set selectedButton to choiceButton.
             const setselectedButton = () => {
