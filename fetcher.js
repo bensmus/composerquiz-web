@@ -20,37 +20,32 @@ class OpenOpusFetcher {
     ]
 
     static async fetchCorrectAndDecoys() {
-        // Fetch all composers from an epoch.
-        async function fetchComposers(epoch) {
+        async function fetchComposerObjs() {
             const composersMethod = 'composer/list/rec.json' // rec.json for well-known composers.
             const response = await axios.get(OpenOpusFetcher.baseUrl + composersMethod)
-            return response.data.composers.filter((composer) => composer.epoch == epoch)
+            return response.data.composers
         }
 
-        // Fetch 4 composers from a random epoch,
-        // or if there are not 4 composers in that epoch,
-        // take a minimal amount of composers from an adjacent epoch.
-        async function fetchFourComposers() {
-            const [epochIndex, epoch] = choice(OpenOpusFetcher.epochs)
-            let composerObjs = await fetchComposers(epoch)
-            const fetchAdj = composerObjs.length < 4
-            if (fetchAdj) { // Need to fetch composers from adjacent epoch.
-                let composerObjsAdjEpoch;
-                if (epochIndex == OpenOpusFetcher.epochs.length - 1) {
-                    composerObjsAdjEpoch = await fetchComposers(OpenOpusFetcher.epochs[OpenOpusFetcher.epochs.length - 2])
-                } else {
-                    composerObjsAdjEpoch = await fetchComposers(OpenOpusFetcher.epochs[epochIndex + 1])
-                }
-                composerObjs = [...composerObjs, ...composerObjsAdjEpoch]
-            }
-            return sample(composerObjs, 4)
-        }
+        const composers = await fetchComposerObjs()
+        const [_, correctComposerObj] = choice(composers) // correctComposerObj: correct composer object.
 
-        const [correctObj, ...decoyObjs] = await fetchFourComposers()
-        const correctId = correctObj.id
-        const correct = correctObj.name
-        const decoys = decoyObjs.map(obj => obj.name)
-        return [correctId, correct, decoys]
+        const correctComposerName = correctComposerObj.name
+        const correctComposerId = correctComposerObj.id
+        const epochA = correctComposerObj.epoch
+
+        // Get epochB, which is adjacent to correct composer's epoch, epoch A.
+        const epochIndex = OpenOpusFetcher.epochs.indexOf(epochA)
+        const isLastEpoch = epochIndex == OpenOpusFetcher.epochs.length - 1
+        const epochB = OpenOpusFetcher.epochs[isLastEpoch ? epochIndex - 1 : epochIndex + 1]
+
+        // Get 3 decoy composers from both epoch A and epoch B, making sure that
+        // decoy is different from correct.
+        const decoyCount = 3
+        const composersFromA = composers.filter((composer) => composer.epoch == epochA && composer.id != correctComposerId)
+        const composersFromB = composers.filter((composer) => composer.epoch == epochB)
+        const decoyObjs = sample([...composersFromA, ...composersFromB], decoyCount)
+
+        return [correctComposerId, correctComposerName, decoyObjs.map(obj => obj.name)]
     }
 
     static async fetchRandomWork(composerId) {
@@ -82,11 +77,22 @@ class SpotifyFetcher {
             }
         }
         const response = await axios.get(SpotifyFetcher.baseUrl + searchMethod, config)
-        const tracks = response.data.tracks.items
+        const items = response.data.tracks.items
 
-        for (const track of tracks) {
-            if (track.preview_url) {
-                return track.preview_url
+        // Check that audio URL we are fetching has a reference to the artist with `composerName`. 
+        // This check increases the chances of getting the correct audio URL.
+        function composerLastNameCheck(item, composerName) {
+            for (const artist of item.artists) {
+                if (artist.name.includes(composerName)) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        for (const item of items) {
+            if (item.preview_url && composerLastNameCheck(item, composerName)) {
+                return item.preview_url
             }
         }
     }
