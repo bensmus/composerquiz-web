@@ -17,9 +17,9 @@ export class CheckButton {
             }
             else if (this._mode == 'Next') {
                 this.mode = 'Loading...'
-                const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
-                audioElem.src = audioUrl
-                workInfo.reset(workTitle, correct)
+                const [previewUrl, entireUrl, workTitle, correct, decoys] = await fetcher.fetch() // FIXME
+                audioElem.src = previewUrl
+                workInfo.reset(workTitle, entireUrl, correct)
                 choiceButtons.reset(correct, decoys)
                 this.mode = 'Check'
             }

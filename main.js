@@ -8,15 +8,16 @@ import { Fetcher } from './fetcher'
 const fetcher = new Fetcher()
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const [audioUrl, workTitle, correct, decoys] = await fetcher.fetch()
+    const [previewUrl, entireUrl, workTitle, correct, decoys] = await fetcher.fetch() // FIXME
 
     const audioElem = document.querySelector('#audio')
-    audioElem.src = audioUrl
+    audioElem.src = previewUrl
 
     const workInfo = new WorkInfo(
         document.querySelector('#work-text'),
         document.querySelector('#composer-text'),
         workTitle,
+        entireUrl,
         correct
     )
 

@@ -64,7 +64,8 @@ class SpotifyFetcher {
 
     static token = ''
 
-    static async fetchAudioUrlWithToken(composerName, workTitle, token) {
+    // AudioUrls: [preview url, spotify entire song url].
+    static async fetchAudioUrlsWithToken(composerName, workTitle, token) {
         const query = `${workTitle} by ${composerName}`
         const searchMethod = '/v1/search'
         const config = {
@@ -92,7 +93,7 @@ class SpotifyFetcher {
 
         for (const item of items) {
             if (item.preview_url && composerLastNameCheck(item, composerName)) {
-                return item.preview_url
+                return [item.preview_url, item.external_urls.spotify]
             }
         }
     }
@@ -103,15 +104,15 @@ class SpotifyFetcher {
         SpotifyFetcher.token = response.data
     }
 
-    static async fetchAudioUrl(composerName, workTitle) {
+    static async fetchAudioUrls(composerName, workTitle) {
         try {
-            const audioUrl = await this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
-            return audioUrl
+            const audioUrls = await this.fetchAudioUrlsWithToken(composerName, workTitle, SpotifyFetcher.token)
+            return audioUrls
         } catch {
             console.log("Fetching new token")
             await SpotifyFetcher.refreshToken()
-            const audioUrl = await this.fetchAudioUrlWithToken(composerName, workTitle, SpotifyFetcher.token)
-            return audioUrl
+            const audioUrls = await this.fetchAudioUrlsWithToken(composerName, workTitle, SpotifyFetcher.token)
+            return audioUrls
         }
     }
 }
@@ -120,7 +121,7 @@ export class Fetcher {
     async fetch() {
         const [correctId, correct, decoys] = await OpenOpusFetcher.fetchCorrectAndDecoys()
         const workTitle = await OpenOpusFetcher.fetchRandomWork(correctId)
-        const audioUrl = await SpotifyFetcher.fetchAudioUrl(correct, workTitle)
-        return [audioUrl, workTitle, correct, decoys]
+        const [previewUrl, entireUrl] = await SpotifyFetcher.fetchAudioUrls(correct, workTitle)
+        return [previewUrl, entireUrl, workTitle, correct, decoys]
     }
 }
