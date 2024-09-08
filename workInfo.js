@@ -5,9 +5,6 @@ export class WorkInfo {
         this.workTextElem = workTextElem
         this.composerTextElem = composerTextElem
         this.reset(workText, composerText)
-
-        // Bind the reveal method to the instance
-        this.reveal = this.reveal.bind(this);
     }
 
     reset(workText, composerText) {
