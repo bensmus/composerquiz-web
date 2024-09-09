@@ -12,12 +12,12 @@ export class WorkInfo {
         this.workText = workText
         this.entireUrl = entireUrl
         this.composerText = composerText
-        this.workTextElem.innerText = '?'
-        this.composerTextElem.innerHTML = 'Composed by ?'
+        this.workTextElem.innerHTML = '?'
+        this.composerTextElem.innerText = 'Composed by ?'
     }
 
     reveal() {
-        this.workTextElem.innerText = this.workText
-        this.composerTextElem.innerHTML = `Composed by <a target="_blank" rel="noopener noreferrer" href=${this.entireUrl}>${this.composerText}</a>`
+        this.workTextElem.innerHTML = `<a target="_blank" rel="noopener noreferrer" href=${this.entireUrl}>${this.workText}</a>`
+        this.composerTextElem.innerText = `Composed by ${this.composerText}`
     }
 }
